@@ -300,7 +300,9 @@ int main(int argc, const char *argv[]) {
 
     sum = calc_crc32(sum, paddingfile, 0);
 
-    const unsigned int squashfs_size = squashfsfile_size + squashfs_padding;
+    // Original examples do not include the padding here, but it may not matter
+    // const unsigned int squashfs_size = squashfsfile_size + squashfs_padding;
+    const unsigned int squashfs_size = squashfsfile_size;
     const unsigned int tclinux_size = header_size + kernelfile_size + squashfs_size;
 
     unsigned char header[header_size];
