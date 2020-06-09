@@ -17,6 +17,7 @@ const unsigned int magic_device_offset = 4;
 const unsigned int tclinux_size_offset = 8;
 const unsigned int tclinux_checksum_offset = 0x0C;
 const unsigned int firmware_version_offset = 0x10;
+const unsigned int board_offset - 0x50;
 const unsigned int squashfs_offset_offset = 0x50;
 const unsigned int squashfs_size_offset = 0x54;
 const unsigned int model_offset = 0x5C;
@@ -57,7 +58,7 @@ unsigned int calc_crc32(unsigned int sum, const char *filename, int offset) {
       //printf("byte %02x, sum %08x\n", buffer[i], sum);
     }
   }
-    
+
   close(fd);
   return sum;
 }
@@ -93,7 +94,7 @@ int main(int argc, const char *argv[]) {
   const char *squashfsfile = NULL;
   const char *outputheaderfile = NULL;
   const char *paddingfile = NULL;
-  
+
   for (i = 1; i < argc; i++) {
       if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
         mode = HELP;
@@ -102,7 +103,7 @@ int main(int argc, const char *argv[]) {
       } else if (!strcmp(argv[i], "-c") || !strcmp(argv[i], "--check")) {
         mode = CHECK;
         if (i >= argc -1) {
-          fprintf(stderr, "File to check (tclinux.bin) not specified\n");
+          fprintf(stderr, "File to check not specified\n");
           arg_err = 2;
           break;
         }
@@ -190,7 +191,7 @@ int main(int argc, const char *argv[]) {
         i++;
         board = add_newline(argv[i]);
         arg_err = 0;
-        continue;        
+        continue;
       } else if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version")) {
         mode = CREATE;
         if (i >= argc -1) {
@@ -208,7 +209,7 @@ int main(int argc, const char *argv[]) {
         break;
       }
   }
-  
+
   if (mode == CREATE && !kernelfile) {
     fprintf(stderr, "Kernel file not specified\n");
     arg_err = 2;
@@ -230,7 +231,7 @@ int main(int argc, const char *argv[]) {
   }
 
   if (mode == HELP || arg_err) {
-    fprintf(stderr, "Usage: %s [ {-h|--help} | {-c|--check tclinux.bin} | {-k|--kernel kernel.bin -s|--squashfs squashfs.bin -o|--output header.bin -p|--padding padding.bin [-m|--model 'model'] [-b|--board 'board'] [-v|--version 'firmware_version']} ]\n", argv[0]);
+    fprintf(stderr, "Usage: %s [ {-h|--help} | {-c|--check firmware.bin} | {-k|--kernel kernel.bin -s|--squashfs squashfs.bin -o|--output header.bin -p|--padding padding.bin [-m|--model 'model'] [-b|--board 'board'] [-v|--version 'firmware_version']} ]\n", argv[0]);
     return arg_err;
   }
 
@@ -238,20 +239,20 @@ int main(int argc, const char *argv[]) {
   char cnv[] = {0, 0};
   for (i = 0; i < crc32_size; i++) {
     j = i << 1;
-    cnv[0] = crc32_c[j];   
+    cnv[0] = crc32_c[j];
     const int high = (int) strtol(cnv, NULL, 16);
     cnv[0] = crc32_c[j + 1];
     const int low = (int) strtol(cnv, NULL, 16);
     const int val = 16 * high + low;
     //printf("%d %d %d %02x\n", low, high, val, val);
     crc32_m[i] = val;
-  } 
+  }
 
   unsigned int sum = 0xFFFFFFFF;
 
   if (mode == CHECK) {
     sum = calc_crc32(sum, checkfile, header_size);
-    
+
     //printf("Reading header...\n");
     printf("Manual check (binwalk): header size must be %d (0x%04X)\n", header_size, header_size);
     unsigned char header[header_size];
@@ -318,15 +319,16 @@ int main(int argc, const char *argv[]) {
     set_int(header, tclinux_checksum_offset, sum);
     printf("Firmware version at 0x%02X: %s\n", firmware_version_offset, strip_newline(firmware_version));
     set_string(header, firmware_version_offset, firmware_version);
-    set_string(header, 0x30, board);
+    printf("Board name at 0x%02X: %s\n", board_offset, strip_newline(board));
+    set_string(header, board_offset, board);
     printf("squashfs offset: %u (0x%08X) at 0x%02X\n", squashfs_offset, squashfs_offset, squashfs_offset_offset);
     set_int(header, squashfs_offset_offset, squashfs_offset);
     printf("squashfs size: %u (0x%08X) at 0x%02X\n", squashfs_size, squashfs_size, squashfs_size_offset);
     set_int(header, squashfs_size_offset, squashfs_size);
     printf("Model at 0x%02X: %s\n", model_offset, strip_newline(model));
-    set_string(header, model_offset, model);    
+    set_string(header, model_offset, model);
 
-    printf("Writing header to %s. Create image with\n\tcat %s %s %s %s > tclinux.bin\n", outputheaderfile, outputheaderfile, kernelfile, squashfsfile, paddingfile);
+    printf("Writing header to %s. Create image with\n\tcat %s %s %s %s > firmware.bin\n", outputheaderfile, outputheaderfile, kernelfile, squashfsfile, paddingfile);
     fd = open(outputheaderfile, O_WRONLY | O_CREAT | O_TRUNC,  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     write(fd, header, header_size);
     close(fd);
