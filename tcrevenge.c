@@ -17,7 +17,7 @@ const unsigned int magic_device_offset = 4;
 const unsigned int tclinux_size_offset = 8;
 const unsigned int tclinux_checksum_offset = 0x0C;
 const unsigned int firmware_version_offset = 0x10;
-const unsigned int board_offset - 0x50;
+const unsigned int board_offset = 0x30;
 const unsigned int squashfs_offset_offset = 0x50;
 const unsigned int squashfs_size_offset = 0x54;
 const unsigned int model_offset = 0x5C;
