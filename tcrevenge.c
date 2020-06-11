@@ -8,6 +8,7 @@
 const unsigned int header_size = 0x100;
 const unsigned int magic_number = 0x32524448;
 const unsigned int magic_device = 0x00000100;	// maybe the header_size
+const unsigned int squashfs_magic[] = {0x73717368, 0x71736962}; // Possible squashfs magic numbers
 const char *firmware_version = "7.0.1.0\n";	// this looks that is not actually used
 const char *model="3 6035 122 74\n";		// this is used to prevent downgrades. It is the actual version
 const char *board="\n";
@@ -259,6 +260,7 @@ int main(int argc, const char *argv[]) {
     int fd = open(checkfile, O_RDONLY);
     read(fd, header, header_size);
     const unsigned int tclinux_size = lseek(fd, 0, SEEK_END);
+
     close(fd);
 
     const unsigned int found_magic_number = be2int(header + magic_number_offset);
@@ -266,9 +268,9 @@ int main(int argc, const char *argv[]) {
     const unsigned int found_magic_device = be2int(header + magic_device_offset);
     printf("Magic device: 0x%08X found 0x%08X ...%s\n", magic_device, found_magic_device, magic_device == found_magic_device ? "ok" : "failed");
     const unsigned int found_tclinux_size =  be2int(header + tclinux_size_offset);
-    printf("tclinux.bin size: %u found %u ...%s\n", tclinux_size, found_tclinux_size, tclinux_size == found_tclinux_size ? "ok" : "failed");
+    printf("firmware.bin size: %u found %u ...%s\n", tclinux_size, found_tclinux_size, tclinux_size == found_tclinux_size ? "ok" : "failed");
     const unsigned int found_tclinux_checksum =  be2int(header + tclinux_checksum_offset);
-    printf("tclinux.bin chekcsum: 0x%08X found 0x%08X ...%s\n", sum, found_tclinux_checksum, sum == found_tclinux_checksum ? "ok" : "failed");
+    printf("firmware.bin checksum: 0x%08X found 0x%08X ...%s\n", sum, found_tclinux_checksum, sum == found_tclinux_checksum ? "ok" : "failed");
     printf("Manual check Firmware version: %s found %s. If they differ use -v to adjust.\n", strip_newline(firmware_version), strip_newline((const char *) header + firmware_version_offset));
     const unsigned int found_squashfs_offset =  be2int(header + squashfs_offset_offset);
     printf("Manual check (binwalk): squashfs offset must be at 0x%08X\n", found_squashfs_offset + header_size);
