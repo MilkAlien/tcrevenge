@@ -6,12 +6,14 @@
 #include <string.h>
 
 const unsigned int header_size = 0x100;
+const unsigned int squashfs_magic_size = 4;
 const unsigned int magic_number = 0x32524448;
 const unsigned int magic_device = 0x00000100;	// maybe the header_size
-const unsigned int squashfs_magic[] = {0x73717368, 0x71736962}; // Possible squashfs magic numbers
+const unsigned int squashfs_magic_normal = 0x73717368; // Normal Squashfs magic, big endian
 const char *firmware_version = "7.0.1.0\n";	// this looks that is not actually used
-const char *model="3 6035 122 74\n";		// this is used to prevent downgrades. It is the actual version
+const char *model="\n";
 const char *board="\n";
+const char *set_magic="sqsh";
 
 const unsigned int magic_number_offset = 0;
 const unsigned int magic_device_offset = 4;
@@ -95,6 +97,7 @@ int main(int argc, const char *argv[]) {
   const char *squashfsfile = NULL;
   const char *outputheaderfile = NULL;
   const char *paddingfile = NULL;
+  unsigned int skip_padding = 0;
 
   for (i = 1; i < argc; i++) {
       if (!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) {
@@ -174,7 +177,7 @@ int main(int argc, const char *argv[]) {
       } else if (!strcmp(argv[i], "-m") || !strcmp(argv[i], "--model")) {
         mode = CREATE;
         if (i >= argc -1) {
-          fprintf(stderr, "Model (actual version) not specified\n");
+          fprintf(stderr, "Model not specified\n");
           arg_err = 2;
           break;
         }
@@ -191,6 +194,22 @@ int main(int argc, const char *argv[]) {
         }
         i++;
         board = add_newline(argv[i]);
+        arg_err = 0;
+        continue;
+      } else if (!strcmp(argv[i], "-ma") || !strcmp(argv[i], "--magic")) {
+        mode = CREATE;
+        if (i >= argc -1) {
+          fprintf(stderr, "SquashFS magic number not specified\n");
+          arg_err = 2;
+          break;
+        }
+        i++;
+        set_magic = argv[i];
+        arg_err = 0;
+        continue;
+      } else if (!strcmp(argv[i], "-sp") || !strcmp(argv[i], "--skippadding")) {
+        mode = CREATE;
+        skip_padding = 1;
         arg_err = 0;
         continue;
       } else if (!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version")) {
@@ -226,7 +245,7 @@ int main(int argc, const char *argv[]) {
     arg_err = 2;
   }
 
-  if (mode == CREATE && !paddingfile) {
+  if (mode == CREATE && !paddingfile && !skip_padding) {
     fprintf(stderr, "Output padding file not specified\n");
     arg_err = 2;
   }
@@ -257,8 +276,12 @@ int main(int argc, const char *argv[]) {
     //printf("Reading header...\n");
     printf("Manual check (binwalk): header size must be %d (0x%04X)\n", header_size, header_size);
     unsigned char header[header_size];
+    unsigned char squashfs_magic[squashfs_magic_size];
     int fd = open(checkfile, O_RDONLY);
     read(fd, header, header_size);
+    const unsigned int found_squashfs_offset =  be2int(header + squashfs_offset_offset);
+    lseek(fd, found_squashfs_offset + header_size, SEEK_SET);
+    read(fd, squashfs_magic, squashfs_magic_size);
     const unsigned int tclinux_size = lseek(fd, 0, SEEK_END);
 
     close(fd);
@@ -268,44 +291,63 @@ int main(int argc, const char *argv[]) {
     const unsigned int found_magic_device = be2int(header + magic_device_offset);
     printf("Magic device: 0x%08X found 0x%08X ...%s\n", magic_device, found_magic_device, magic_device == found_magic_device ? "ok" : "failed");
     const unsigned int found_tclinux_size =  be2int(header + tclinux_size_offset);
-    printf("firmware.bin size: %u found %u ...%s\n", tclinux_size, found_tclinux_size, tclinux_size == found_tclinux_size ? "ok" : "failed");
+    printf("Firmware size: %u found %u ...%s\n", tclinux_size, found_tclinux_size, tclinux_size == found_tclinux_size ? "ok" : "failed");
     const unsigned int found_tclinux_checksum =  be2int(header + tclinux_checksum_offset);
-    printf("firmware.bin checksum: 0x%08X found 0x%08X ...%s\n", sum, found_tclinux_checksum, sum == found_tclinux_checksum ? "ok" : "failed");
+    const char * found_model = strip_newline((const char *) header + model_offset);
+    printf("Found model: %s Use -m to set ...%s\n", found_model, strcmp(found_model, "\n") ? "ok" : "failed");
+    const char * found_board = strip_newline((const char *) header + board_offset);
+    printf("Found board: %s Use -b to set ...%s\n", found_board, strcmp(found_board, "\n") ? "ok" : "failed");
+    printf("Firmware checksum: 0x%08X found 0x%08X ...%s\n", sum, found_tclinux_checksum, sum == found_tclinux_checksum ? "ok" : "failed");
+    if (be2int(squashfs_magic) == squashfs_magic_normal) {
+      printf("Found big endian squashfs magic number: 0x%X 0x%X 0x%X 0x%X ...ok\n", squashfs_magic[0], squashfs_magic[1], squashfs_magic[2], squashfs_magic[3]);
+    } else if ((squashfs_magic[0] | squashfs_magic[1] | squashfs_magic[2] | squashfs_magic[3]) == squashfs_magic_normal) {
+      printf("Found little endian squashfs magic number: 0x%X 0x%X 0x%X 0x%X ...ok\n", squashfs_magic[0], squashfs_magic[1], squashfs_magic[2], squashfs_magic[3]);
+    } else {
+      printf("Found ABNORMAL squashfs magic number: 0x%X 0x%X 0x%X 0x%X. This is often done to obfuscate the squashfs filesystem within the image. Use -s to adjust ...warning\n", squashfs_magic[0], squashfs_magic[1], squashfs_magic[2], squashfs_magic[3]);
+    }
     printf("Manual check Firmware version: %s found %s. If they differ use -v to adjust.\n", strip_newline(firmware_version), strip_newline((const char *) header + firmware_version_offset));
-    const unsigned int found_squashfs_offset =  be2int(header + squashfs_offset_offset);
     printf("Manual check (binwalk): squashfs offset must be at 0x%08X\n", found_squashfs_offset + header_size);
     const unsigned int found_squashfs_size =  be2int(header + squashfs_size_offset);
     printf("Manual check (mtd partition dump): squashfs size (padded to erase_size at 4K (0x1000)) must be at %u (0x%08X)\n", found_squashfs_size, found_squashfs_size);
-    printf("Manual check (all tests have been done with model 3) Model: %s found %s. If they differ use -m to adjust.\n", strip_newline(model), strip_newline((const char *) header + model_offset));
   }
 
   if (mode == CREATE) {
     sum = calc_crc32(sum, kernelfile, 0);
-    sum = calc_crc32(sum, squashfsfile, 0);
 
     int fd = open(kernelfile, O_RDONLY);
     const unsigned int kernelfile_size = lseek(fd, 0, SEEK_END);
     close(fd);
 
-    fd = open(squashfsfile, O_RDONLY);
+    if (strcmp(set_magic, "sqsh") != 0) {
+      fd = open(squashfsfile, O_RDWR);
+      printf("Patching magic number in %s to 0x%X 0x%X 0x%X 0x%X\n", squashfsfile, set_magic[0], set_magic[1], set_magic[2], set_magic[3]);
+      write(fd, set_magic, 4);
+    } else {
+      fd = open(squashfsfile, O_RDONLY);
+    }
     const unsigned int squashfsfile_size = lseek(fd, 0, SEEK_END);
     close(fd);
 
+    sum = calc_crc32(sum, squashfsfile, 0);
+
     const unsigned int squashfs_offset = kernelfile_size;
-    const unsigned int squashfs_offset_4k_offset = squashfsfile_size % 4096;
-    const unsigned int squashfs_padding = squashfs_offset_4k_offset != 0 ? 4096 - squashfs_offset_4k_offset : 0;
-    printf("Creating necessary squashfs paddingfile %s %d\n", paddingfile, squashfs_padding);
-    unsigned char padding_mem[squashfs_padding];
-    memset(padding_mem, 0, squashfs_padding);
-    fd = open(paddingfile, O_WRONLY | O_CREAT | O_TRUNC,  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-    write(fd, padding_mem, squashfs_padding);
-    close(fd);
+    unsigned int squashfs_size;
+    if (skip_padding == 0) {
+      const unsigned int squashfs_offset_4k_offset = squashfsfile_size % 4096;
+      const unsigned int squashfs_padding = squashfs_offset_4k_offset != 0 ? 4096 - squashfs_offset_4k_offset : 0;
+      printf("Creating necessary squashfs paddingfile %s %d\n", paddingfile, squashfs_padding);
+      unsigned char padding_mem[squashfs_padding];
+      memset(padding_mem, 0, squashfs_padding);
+      fd = open(paddingfile, O_WRONLY | O_CREAT | O_TRUNC,  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+      write(fd, padding_mem, squashfs_padding);
+      close(fd);
 
-    sum = calc_crc32(sum, paddingfile, 0);
+      sum = calc_crc32(sum, paddingfile, 0);
 
-    // Original examples do not include the padding here, but it may not matter
-    // const unsigned int squashfs_size = squashfsfile_size + squashfs_padding;
-    const unsigned int squashfs_size = squashfsfile_size;
+      squashfs_size = squashfsfile_size + squashfs_padding;
+    } else {
+      squashfs_size = squashfsfile_size;
+    }
     const unsigned int tclinux_size = header_size + kernelfile_size + squashfs_size;
 
     unsigned char header[header_size];
@@ -315,9 +357,9 @@ int main(int argc, const char *argv[]) {
     set_int(header, magic_number_offset, magic_number);
     printf("Magic device: 0x%08X at 0x%02X\n", magic_device, magic_device_offset);
     set_int(header, magic_device_offset, magic_device);
-    printf("tclinux.bin size: %u (0x%08X) at 0x%02X\n", tclinux_size, tclinux_size, tclinux_size_offset);
+    printf("Firmware size: %u (0x%08X) at 0x%02X\n", tclinux_size, tclinux_size, tclinux_size_offset);
     set_int(header, tclinux_size_offset, tclinux_size);
-    printf("tclinux.bin checksum: 0x%08X at 0x%02X\n", sum, tclinux_checksum_offset);
+    printf("Firmware checksum: 0x%08X at 0x%02X\n", sum, tclinux_checksum_offset);
     set_int(header, tclinux_checksum_offset, sum);
     printf("Firmware version at 0x%02X: %s\n", firmware_version_offset, strip_newline(firmware_version));
     set_string(header, firmware_version_offset, firmware_version);
@@ -330,7 +372,11 @@ int main(int argc, const char *argv[]) {
     printf("Model at 0x%02X: %s\n", model_offset, strip_newline(model));
     set_string(header, model_offset, model);
 
-    printf("Writing header to %s. Create image with\n\tcat %s %s %s %s > firmware.bin\n", outputheaderfile, outputheaderfile, kernelfile, squashfsfile, paddingfile);
+    if (skip_padding == 0) {
+      printf("Writing header to %s. Create image with\n\tcat %s %s %s %s > firmware.bin\n", outputheaderfile, outputheaderfile, kernelfile, squashfsfile, paddingfile);
+    } else {
+      printf("Writing header to %s. Create image with\n\tcat %s %s %s > firmware.bin\n", outputheaderfile, outputheaderfile, kernelfile, squashfsfile);
+    }
     fd = open(outputheaderfile, O_WRONLY | O_CREAT | O_TRUNC,  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     write(fd, header, header_size);
     close(fd);
