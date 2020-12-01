@@ -1,5 +1,5 @@
 # tcrevenge
-Hacking TrendChip Firmware (ADSL modem/router ZTE H108NS)
+Hacking TrendChip Firmware (ADSL modem/router *****v4)
 
 ## Purpose
 **tcrevenge** is a command line utility that helps you analyze and compose TrendChip firmware images (tclinux.bin). It reimplements the **CRC** algorithm found in firmware that prohibits broken or custom firmware uploads.
