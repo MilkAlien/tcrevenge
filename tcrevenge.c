@@ -225,6 +225,17 @@ int main(int argc, const char *argv[]) {
         firmware_version = add_newline(argv[i]);
         arg_err = 0;
         continue;
+      } else if (!strcmp(argv[i], "-kv") || !strcmp(argv[i], "--kversion")) {
+        mode = CREATE;
+        if (i >= argc -1) {
+          fprintf(stderr, "Kernel version (probably useless) not specified\n");
+          arg_err = 2;
+          break;
+        }
+        i++;
+        kernel_version = add_newline(argv[i]);
+        arg_err = 0;
+        continue;
       } else {
         fprintf(stderr, "Unknown argument %s\n", argv[i]);
         arg_err = 1;
@@ -308,6 +319,7 @@ int main(int argc, const char *argv[]) {
       printf("Found ABNORMAL squashfs magic number: 0x%X 0x%X 0x%X 0x%X. This is often done to obfuscate the squashfs filesystem within the image. Use -s to adjust ...warning\n", squashfs_magic[0], squashfs_magic[1], squashfs_magic[2], squashfs_magic[3]);
     }
     printf("Manual check Firmware version: %s found %s. If they differ use -v to adjust.\n", strip_newline(firmware_version), strip_newline((const char *) header + firmware_version_offset));
+    printf("Manual check Kernel version: %s found %s. If they differ use -kv to adjust.\n", strip_newline(kernel_version), strip_newline((const char *) header + kernel_version_offset));
     printf("Manual check (binwalk): squashfs offset must be at 0x%08X\n", found_squashfs_offset + header_size);
     const unsigned int found_squashfs_size =  be2int(header + squashfs_size_offset);
     printf("Manual check (mtd partition dump): squashfs size (padded to erase_size at 4K (0x1000)) must be at %u (0x%08X)\n", found_squashfs_size, found_squashfs_size);
@@ -365,6 +377,8 @@ int main(int argc, const char *argv[]) {
     set_int(header, tclinux_checksum_offset, sum);
     printf("Firmware version at 0x%02X: %s\n", firmware_version_offset, strip_newline(firmware_version));
     set_string(header, firmware_version_offset, firmware_version);
+    printf("Kernel version at 0x%02X: %s\n", kernel_version_offset, strip_newline(kernel_version));
+    set_string(header, kernel_version_offset, kernel_version);
     printf("Board name at 0x%02X: %s\n", board_offset, strip_newline(board));
     set_string(header, board_offset, board);
     printf("squashfs offset: %u (0x%08X) at 0x%02X\n", squashfs_offset, squashfs_offset, squashfs_offset_offset);
