@@ -8,6 +8,7 @@
 const unsigned int header_size = 0x100;
 const unsigned int squashfs_magic_size = 4;
 const unsigned int magic_number = 0x43485730;
+const unsigned int magic_number2 = 0x80002000;
 const unsigned int magic_device = 0x00000100;	// maybe the header_size
 const unsigned int squashfs_magic_normal = 0x73717368; // Normal Squashfs magic, big endian
 const char *firmware_version = "7.3.234.250_v001\n";	// this looks that is not actually used
@@ -16,6 +17,7 @@ const char *board="\n";
 const char *set_magic="sqsh";
 
 const unsigned int magic_number_offset = 0;
+const unsigned int magic_number2_offset = 0x7C;
 const unsigned int magic_device_offset = 4;
 const unsigned int tclinux_size_offset = 8;
 const unsigned int tclinux_checksum_offset = 0x0C;
@@ -288,6 +290,8 @@ int main(int argc, const char *argv[]) {
 
     const unsigned int found_magic_number = be2int(header + magic_number_offset);
     printf("Magic number: 0x%08X found 0x%08X ...%s\n", magic_number, found_magic_number, magic_number == found_magic_number ? "ok" : "failed");
+    const unsigned int found_magic_number2 = be2int(header + magic_number2_offset);
+    printf("Magic number2: 0x%08X found 0x%08X ...%s\n", magic_number2, found_magic_number2, magic_number2 == found_magic_number2 ? "ok" : "failed");
     const unsigned int found_magic_device = be2int(header + magic_device_offset);
     printf("Magic device: 0x%08X found 0x%08X ...%s\n", magic_device, found_magic_device, magic_device == found_magic_device ? "ok" : "failed");
     const unsigned int found_tclinux_size =  be2int(header + tclinux_size_offset);
@@ -355,6 +359,8 @@ int main(int argc, const char *argv[]) {
 
     printf("Magic number: 0x%08X at 0x%02X\n", magic_number, magic_number_offset);
     set_int(header, magic_number_offset, magic_number);
+    printf("Magic number2: 0x%08X at 0x%02X\n", magic_number2, magic_number2_offset);
+    set_int(header, magic_number2_offset, magic_number2);
     printf("Magic device: 0x%08X at 0x%02X\n", magic_device, magic_device_offset);
     set_int(header, magic_device_offset, magic_device);
     printf("Firmware size: %u (0x%08X) at 0x%02X\n", tclinux_size, tclinux_size, tclinux_size_offset);
