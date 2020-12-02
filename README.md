@@ -1,4 +1,4 @@
-# tcrevenge
+# tcrevenge + new scripts
 Hacking TrendChip Firmware (ADSL modem/router *****v4)
 
 ## Purpose
