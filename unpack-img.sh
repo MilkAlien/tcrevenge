@@ -32,7 +32,7 @@ dd if=gpon.bin of=tclinux.squashfs skip=$s03 bs=1
 	echo
 	echo -----------------------------------------------------------------
 	echo
-	rm -rf gpon.bin.gz gpon.bin gpon.0 tclinux.squashfs .tmp/ 
 read -p "Press any key to resume ..."
 sudo unsquashfs tclinux.squashfs
+rm -rf gpon.bin.gz gpon.bin gpon.0 tclinux.squashfs .tmp/ 
 cd squashfs-root
