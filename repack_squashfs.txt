@@ -27,6 +27,7 @@ sudo unsquashfs gpon.squashfs
 ## Edit rootfs
 
 ## Make squashfs
+rm -rf gpon.squashfs
 mksquashfs squashfs-root/ gpon.squashfs -comp lzma -b 131072 -nopad
 ./tcrevenge -k kernel -s gpon.squashfs -o header -sp
 cat header kernel gpon.squashfs > firmware.0
