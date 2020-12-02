@@ -11,7 +11,6 @@ make
 # Skip superblock
 dd if=gpon.img of=gpon.gz skip=192 bs=1
 gunzip gpon.gz
-binwalk gpon
 
 ## Check image original
 dd if=gpon of=test.0 skip=608 bs=1
@@ -19,6 +18,7 @@ dd if=gpon of=test.0 skip=608 bs=1
 binwalk test.0
 
 ## Extract kernel and rootfs
+binwalk gpon
 dd if=gpon of=kernel skip=864 count=`binwalk gpon | awk '/Squash/ {print $1 - 864;}'` bs=1
 dd if=gpon of=gpon.squashfs skip=2482221 bs=1
 sudo unsquashfs gpon.squashfs
