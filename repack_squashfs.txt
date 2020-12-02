@@ -17,12 +17,10 @@ dd if=gpon of=test.0 skip=608 bs=1
 ./tcrevenge -c test.0
 binwalk test.0
 
-## Extract rootfs
+## Extract kernel and rootfs
+dd if=gpon of=kernel skip=864 count=`binwalk gpon | awk '/Squash/ {print $1 - 864;}'` bs=1
 dd if=gpon of=gpon.squashfs skip=2482221 bs=1
 sudo unsquashfs gpon.squashfs
-
-## Extract kernel
-dd if=gpon of=kernel skip=864 count=`binwalk gpon | awk '/Squash/ {print $1 - 864;}'` bs=1
 
 ## Edit rootfs
 
