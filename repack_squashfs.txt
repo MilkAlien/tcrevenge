@@ -13,6 +13,7 @@ dd if=gpon.img of=gpon.gz skip=192 bs=1
 gunzip gpon.gz
 
 ## Check image original
+binwalk gpon
 dd if=gpon of=test.0 skip=608 bs=1
 ./tcrevenge -c test.0
 binwalk test.0
