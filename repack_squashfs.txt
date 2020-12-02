@@ -11,6 +11,7 @@ make
 # Skip superblock
 dd if=gpon.img of=gpon.gz skip=192 bs=1
 gunzip gpon.gz
+binwalk gpon
 
 ## Check image original
 dd if=gpon of=test.0 skip=608 bs=1
