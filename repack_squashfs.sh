@@ -45,10 +45,10 @@ cat header3 firmware.bin.gz > gpon.img
 
 --------------------------------------------------------
 
-## Распаковка и проверка версии zImage {
-	grep -P -a -b -m 1 --only-matching '\x5D\x00\x00' kernel | cut -f 1 -d :
-	pos=$(grep -P -a -b -m 1 --only-matching '\x5D\x00\x00' kernel | cut -f 1 -d :)
-	dd if=kernel of=piggy.lzma bs=1 skip=$pos
-	unlzma -c piggy.lzma > Image
-	strings Image | grep 'Linux version'
-}
+## Unpack kernel & check version
+#	grep -P -a -b -m 1 --only-matching '\x5D\x00\x00' kernel | cut -f 1 -d :
+#	pos=$(grep -P -a -b -m 1 --only-matching '\x5D\x00\x00' kernel | cut -f 1 -d :)
+#	dd if=kernel of=piggy.lzma bs=1 skip=$pos
+#	unlzma -c piggy.lzma > Image
+#	strings Image | grep 'Linux version'
+
