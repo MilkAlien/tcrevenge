@@ -21,7 +21,7 @@ binwalk test.0
 ## Extract kernel and rootfs
 binwalk gpon
 dd if=gpon of=kernel skip=864 count=`binwalk gpon | awk '/Squash/ {print $1 - 864;}'` bs=1
-dd if=gpon of=gpon.squashfs skip=2482221 bs=1
+dd if=gpon of=gpon.squashfs skip=2482156 bs=1
 sudo unsquashfs gpon.squashfs
 
 ## Edit rootfs
