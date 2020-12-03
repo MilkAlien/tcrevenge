@@ -1,6 +1,16 @@
 # tcrevenge + new scripts
 Hacking TrendChip Firmware (ADSL modem/router *****v4)
 
+```
+git clone https://github.com/MilkAlien/tcrevenge.git
+mv /PATH/to/your/sc*.*.*.img /PATH/to/tcrevenge/gpon.img
+cd tcrevenge
+make
+sh ./unpack-img.sh
+cd /PATH/to/tcrevenge/squashfs-root
+...
+```
+
 ## Purpose
 **tcrevenge** is a command line utility that helps you analyze and compose TrendChip firmware images (tclinux.bin). It reimplements the **CRC** algorithm found in firmware that prohibits broken or custom firmware uploads.
 
