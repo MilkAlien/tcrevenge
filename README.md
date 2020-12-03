@@ -2,6 +2,7 @@
 Hacking TrendChip Firmware (ADSL modem/router *****v4)
 
 ```
+## NOT USE WSL/WSL2
 git clone https://github.com/MilkAlien/tcrevenge.git
 mv /PATH/to/your/sc*.*.*.img /PATH/to/tcrevenge/gpon.img
 cd tcrevenge
