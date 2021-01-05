@@ -1,5 +1,5 @@
 # tcrevenge + new scripts
-Hacking TrendChip Firmware (ADSL modem/router *****v4)
+Hacking TrendChip Firmware FG824CD (ADSL modem/router *****v4)
 
 ```
 ## NOT USE WSL/WSL2
