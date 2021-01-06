@@ -9,7 +9,7 @@ cd tcrevenge
 make
 sh ./unpack-img.sh
 cd /PATH/to/tcrevenge/squashfs-root
-check "repack_squashfs.info" fore make first images!
+check "repack_squashfs.info" for make first images!
 ...
 ```
 
