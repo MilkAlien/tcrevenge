@@ -14,7 +14,7 @@ sudo sh ./unpack-img.sh
 sudo sh ./repack_squashfs.sh
 ...
 ```
-# Если "repack_squashfs.sh" пьлюется ошибками, поочередно выполнить в терминале следующие комманды:
+Если "repack_squashfs.sh" пьлюется ошибками, поочередно выполнить в терминале следующие комманды:
 ```
 sudo mksquashfs squashfs-root/ gpon.squashfs -comp lzma -b 131072 -nopad
 ./tcrevenge -k kernel -s gpon.squashfs -o header -sp
