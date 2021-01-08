@@ -55,4 +55,4 @@ cat header3 firmware.gz > $ver.img
 ```
 
 
-# Original branch >> https://github.com/vasvir/tcrevenge
+# Original branch by_vasvir >> https://github.com/vasvir/tcrevenge
