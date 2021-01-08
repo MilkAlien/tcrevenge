@@ -4,11 +4,11 @@ Hacking TrendChip Firmware FG824CD (ADSL modem/router *****v4)
 ```
 ## NOT USE WSL/WSL2
 git clone https://github.com/MilkAlien/tcrevenge.git
-mv /PATH/to/your/sc*.*.*.img /PATH/to/tcrevenge/gpon.img
+mv /PATH/to/sc*.*.*.img /PATH/to/tcrevenge/gpon.img
 cd tcrevenge
 make
 sudo sh ./unpack-img.sh
-cd /PATH/to/tcrevenge/squashfs-root
+cd squashfs-root
 check "repack_squashfs.info" for make first images!
 ...
 ```
