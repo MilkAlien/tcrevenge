@@ -1,18 +1,14 @@
 #!/bin/bash
 echo=0
-## Unpack
-# 'gpon.img' > ../tcrevenge
-# Skip superblock & extract img
+mv *.img gpon.img
 s01=$(binwalk gpon.img | awk '/gzip/ {print $1;}')
-dd if=gpon.img of=gpon.bin.gz skip=$s01 bs=1
-gunzip gpon.bin.gz
-# Skip superblock bin
-s02=$(binwalk gpon.bin | awk '/LZMA/ {print $1;}')
-echo $s02
-s03=$(binwalk gpon.bin | awk '/Squash/ {print $1;}')
-# Extract kernel and rootfs
-dd if=gpon.bin of=kernel skip=864 count=`binwalk gpon.bin | awk '/Squash/ {print $1 - 864;}'` bs=1
-dd if=gpon.bin of=tclinux.squashfs skip=$s03 bs=1
-sudo unsquashfs tclinux.squashfs
-rm -rf gpon.bin.gz gpon.bin gpon.0 tclinux.squashfs gpon.img .tmp/ 
-cd squashfs-root
+s02=$(binwalk gpon.img | awk '/gzip/ {print $2;}' | awk -F"x" '{print $2;}')
+head -c$s01 gpon.img > header3
+binwalk -Me gpon.img
+cd _*
+# s03=$(binwalk $s02 | awk '/LZMA/ {print $1;}')
+# s04=$(binwalk $s02 | awk '/LZMA/ {print $2;}' | awk -F"x" '{print $2;}')
+head -c608 $s02  > ../header2
+cd _*
+mv squashfs-root ../../squashfs-root
+cd ../../squashfs-root
