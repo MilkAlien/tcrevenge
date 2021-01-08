@@ -12,3 +12,4 @@ head -c608 $s02  > ../header2
 cd _*
 mv squashfs-root ../../squashfs-root
 cd ../../squashfs-root
+rm -rf ../_*
