@@ -1,7 +1,6 @@
 #!/bin/bash
 echo=0
-sudo mksquashfs squashfs-root/ gpon.squashfs -comp lzma -b 131072 -nopad
-make
+mksquashfs squashfs-root/ gpon.squashfs -comp lzma -b 131072 -nopad
 ./tcrevenge -k kernel -s gpon.squashfs -o header -sp
 cat header kernel gpon.squashfs > firmware.0
 size=`stat firmware.0 -c %s`
