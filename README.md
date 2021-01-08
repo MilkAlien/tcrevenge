@@ -11,7 +11,7 @@ make
 sudo sh ./unpack-img.sh
 ## Edit squashfs-root
 ## mv /PATH/to/tcrevenge/kernel(***)/kernel > /PATH/to/tcrevenge/kernel
-check "repack_squashfs.info" for make new images!
+sudo sh ./repack_squashfs.sh
 ...
 ```
 
