@@ -10,6 +10,7 @@ make
 ## mv /PATH/to/*.img /PATH/to/tcrevenge/gpon.img
 sudo sh ./unpack-img.sh
 ## Edit squashfs-root
+## mv /PATH/to/tcrevenge/kernel(***)/kernel > /PATH/to/tcrevenge/kernel
 check "repack_squashfs.info" for make new images!
 ...
 ```
