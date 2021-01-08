@@ -14,7 +14,7 @@ d2=`date +%d`
 d3=`date +%T`
 d4=`date +%Y`
 d5=`echo $d0 $d1 $d2 $d3 $d4`
-echo $size $crc32 $crc32_10 $pid $ver $d5 $d6
+# echo $size $crc32 $crc32_10 $pid $ver $d5 $d6
 echo -n 'kernel_rootfs' >> header2
 echo -en '\00''\00''\00''\00''\00''\00''\00''\00''\00''\00''\00''\00''\00''\00''\00''\00''\00''\00''\00' >> header2
 echo -n $size >> header2
