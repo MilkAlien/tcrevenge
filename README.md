@@ -31,7 +31,7 @@ cd ./squashfs-root/
 
 #### 5.1. QEMU test squashfs-root
 ```
-sudo mount ./rootfs.img ./squashfs-root/mnt/rootfs
+sudo mount ./rootfs/rootfs.img ./squashfs-root/mnt/rootfs
 cd ./squashfs-root/
 sudo cp /usr/bin/qemu-mips-static .
 sudo chroot . ./qemu-mips-static bin/busybox sh
