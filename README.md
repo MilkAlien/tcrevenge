@@ -19,7 +19,7 @@ cd tcrevenge
 make
 ```
 
-#### 3. Copy stock image to "~/tcrevenge/"
+#### 3. Copy stock image to '~/tcrevenge'
 
 #### 4. Unpack stock image:
 ```
@@ -40,16 +40,16 @@ sudo chroot . ./qemu-mips-static bin/busybox sh
 
 #### 6. Making a new firmware!
 
-#### 6.1. Copy "~/tcrevenge/kernel('your.version')/kernel" to "~/tcrevenge/"
+#### 6.1. Copy '~/tcrevenge/kernel(*your_version*)/kernel' to '~/tcrevenge'
 
 #### 6.2. Repacking custom image:
 ```
 sudo sh ./repack_squashfs.sh
 ```
 
-#### 7. Completed! Take a new image "~/tcrevenge/'youre.version'.img"
+#### 7. Completed! Take a new image '~/tcrevenge/*youre_version*.img'
 
-#### If "6.2" gives errors, run the following commands in terminal one by one:
+#### If '6.2' gives errors, run the following commands in terminal one by one:
 ```
 sudo mksquashfs squashfs-root/ gpon.squashfs -comp lzma -b 131072 -nopad
 ./tcrevenge -k kernel -s gpon.squashfs -o header -sp
@@ -90,4 +90,4 @@ cat header3 firmware.gz > $ver.img
 ```
 
 
-Original branch by vasvir >> https://github.com/vasvir/tcrevenge
+### Original branch by vasvir >> https://github.com/vasvir/tcrevenge
