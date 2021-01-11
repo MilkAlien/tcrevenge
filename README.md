@@ -47,6 +47,9 @@ sudo rm -rf ./squashfs-root/qemu-mips-static
 #### 6. Making a new firmware!
 
 #### 6.1. Copy '/tcrevenge/kernel/(*your_version*)/kernel' to '/tcrevenge/'
+```
+cp ./kernel\(sc3.0.16\)/kernel ./
+```
 
 #### 6.2. Repacking custom image:
 ```
