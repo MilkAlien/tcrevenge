@@ -19,7 +19,7 @@ cd tcrevenge
 make
 ```
 
-#### 3. Copy stock image to '~/tcrevenge'
+#### 3. Copy stock image to '~/tcrevenge/'
 
 #### 4. Unpack stock image:
 ```
@@ -40,7 +40,7 @@ sudo chroot . ./qemu-mips-static bin/busybox sh
 
 #### 6. Making a new firmware!
 
-#### 6.1. Copy '/tcrevenge/kernel/(*your_version*)/kernel' to '/tcrevenge'
+#### 6.1. Copy '/tcrevenge/kernel/(*your_version*)/kernel' to '/tcrevenge/'
 
 #### 6.2. Repacking custom image:
 ```
