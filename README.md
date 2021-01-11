@@ -8,7 +8,7 @@ Hacking TrendChip Firmware FG824CD (ADSL modem/router *****v4)
 
 #### 1. Be sure to install the following utilities before proceeding:
 ```
-sudo apt install git libarchive-zip-perl binwalk squashfs-tools
+sudo apt install git make libarchive-zip-perl binwalk squashfs-tools qemu-user-static
 ```
 
 #### 2. Clone repo and make a tcrevenge:
@@ -31,7 +31,6 @@ cd ./squashfs-root/
 
 #### 5.1. QEMU test squashfs-root
 ```
-sudo apt install qemu-user-static
 sudo mount ./rootfs.img ./squashfs-root/mnt/rootfs
 cd ./squashfs-root/
 sudo cp /usr/bin/qemu-mips-static .
