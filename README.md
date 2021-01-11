@@ -8,7 +8,7 @@ Hacking TrendChip Firmware FG824CD (ADSL modem/router *****v4)
 
 #### 1. Be sure to install the following utilities before proceeding:
 ```
-sudo apt install libarchive-zip-perl binwalk squashfs-tools
+sudo apt install git libarchive-zip-perl binwalk squashfs-tools
 ```
 
 #### 2. Clone repo and make a tcrevenge:
