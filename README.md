@@ -36,6 +36,13 @@ sudo cp /usr/bin/qemu-mips-static .
 sudo chroot . ./qemu-mips-static bin/busybox sh
 ```
 
+#### 5.2. !!!----and qemu chroot an clear----!!!
+```
+exit
+sudo umount ~/tcrevenge/rootfs/rootfs.img
+sudo rm -rf ~/tcrevenge/squashfs-root/qemu-mips-static
+```
+
 #### 6. Making a new firmware!
 
 #### 6.1. Copy '/tcrevenge/kernel/(*your_version*)/kernel' to '/tcrevenge/'
