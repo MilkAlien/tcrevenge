@@ -1,11 +1,12 @@
 # tcrevenge + new scripts
 Hacking TrendChip Firmware FG824CD (ADSL modem/router *****v4)
 
-## WARNING!
-### NOT USE WSL/WSL2!
-#### If you are here, then you know what you are doing!
-##### I am not responsible for your bricks!
-1. Be sure to install the following utilities before proceeding.:
+# WARNING!
+## NOT USE WSL/WSL2!
+### If you are here, then you know what you are doing!
+#### I am not responsible for your bricks!
+
+1. Be sure to install the following utilities before proceeding:
 ```
 sudo apt install libarchive-zip-perl binwalk squashfs-tools
 ```
@@ -39,14 +40,14 @@ sudo chroot . ./qemu-mips-static bin/busybox sh
 
 6. Making a new firmware!
 
-6.1. Copy ~"/tcrevenge/kernel(*your.version*)/kernel" to "~/tcrevenge/"
+6.1. Copy ~"/tcrevenge/kernel('your.version')/kernel" to "~/tcrevenge/"
 
 6.2. Repacking custom image:
 ```
 sudo sh ./repack_squashfs.sh
 ```
 
-7. Completed! Take a new image "~/tcrevenge/*youre.version*.img"
+7. Completed! Take a new image "~/tcrevenge/'youre.version'.img"
 
 If "6.2" gives errors, run the following commands in terminal one by one:
 ```
