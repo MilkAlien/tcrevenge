@@ -1,12 +1,6 @@
 # tcrevenge + new scripts
 Hacking TrendChip Firmware FG824CD (ADSL modem/router *****v4)
 
-#  ___  ___  ___  ___  _ _    ___  ___  
-# | __|/ __|( _ )|_  )| | |  / __||   \ 
-# | _|| (_ |/ _ \ / / |_  _|| (__ | |) |
-# |_|  \___|\___//___|  |_|  \___||___/ 
-                                                       
- 
 ## WARNING!
 ### NOT USE WSL/WSL2!
 #### If you are here, then you know what you are doing!
