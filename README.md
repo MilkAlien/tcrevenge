@@ -24,10 +24,9 @@ make
 #### 4. Unpack stock image:
 ```
 sudo sh ./unpack-img.sh
-cd ./squashfs-root/
 ```
 
-#### 5. Edit squashfs-root...
+#### 5. Edit '~/tcrevenge/squashfs-root...'
 
 #### 5.1. QEMU test squashfs-root
 ```
